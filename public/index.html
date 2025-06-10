@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie</title>
+    <link rel="icon" href="images/icon.png" type="image/x-icon">
+    <link rel="manifest" href="app.webmanifest">
+    <script src="app.js" type="module" defer></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1><img src="images/logo.png" alt="light"></h1>
+        <nav>
+            <ul>
+                <li><a class="navlink" href="/">Movies</a></li>
+                <li><a class="navlink" href="/account/favorites">Favorites</a></li>
+                <li><a class="navlink" href="/account/watchlist">Watch Lists</a></li>
+                <li><a class="navlink" href="/account/">My Account</a></li>
+            </ul>
+        </nav>
+        <form action="app.search(event)">
+            <input type="search" placeholder="Search for movies">
+        </form>
+    </header>
+
+    <main>
+        <home-page></home-page>
+    </main>
+
+    <template id="template-home">
+        <section class="vertical-scroll" id="top-10">
+            <h2>This Week's top movies</h2>
+            <ul></ul>
+        </section>
+        <section class="vertical-scroll" id="random">
+            <h2>This Week's random movies</h2>
+            <ul></ul>
+        </section>
+    </template>
+
+    <footer>
+        <p>Copyright</p>
+    </footer>
+</body>
+</html>

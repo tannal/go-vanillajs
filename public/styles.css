@@ -431,7 +431,7 @@ form {
     background-color: var(--primaryColor);
     padding: 20px;
     border-radius: 20px;
-    margin: auto;
+    margin: 0;
 }
 
 form p {
