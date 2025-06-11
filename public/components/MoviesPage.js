@@ -1,5 +1,5 @@
 import { API } from "../services/api.js";
-
+import { MovieItem } from "../components/MovieItem.js";
 export class MoviesPage extends HTMLElement {
 
     async render(query) {
@@ -14,7 +14,7 @@ export class MoviesPage extends HTMLElement {
         if (movies && movies.length > 0) {
             movies.forEach(movie => {
                 const li = document.createElement("li");
-                li.appendChild(new MovieItemComponent(movie));
+                li.appendChild(new MovieItem(movie));
                 ulMovies.appendChild(li);
             });
         } else {
@@ -37,7 +37,7 @@ export class MoviesPage extends HTMLElement {
         const urlParams = new URLSearchParams(window.location.search);
         const query = urlParams.get('q');
         if (query) {
-            this.querySelector("h2").textContent = `'${query}' movies`;
+            this.querySelector("h2").textContent = `${query} movies`;
             this.render(query);
         } else {
             app.showError();

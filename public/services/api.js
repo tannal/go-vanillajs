@@ -20,13 +20,16 @@ export const API = {
     return API.fetch(`/api/movies/search`, {query, order, genres});
   },
 
-  fetch: async (url, options = {}) => {
-    const response = await fetch(url, options);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+fetch: async (serviceName, args) => {
+    try {
+        const queryString = args ? new URLSearchParams(args).toString() : "";
+        const response = await fetch(API.baseURL + serviceName + "?" + queryString);
+        const result = await response.json();
+        return result;
+    } catch (e) {
+        console.error(e);
     }
-    return response.json();
-  },
+}
 }
 
 
