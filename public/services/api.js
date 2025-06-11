@@ -1,11 +1,12 @@
 
 
 export const API = {
+  baseURL: 'http://localhost:8080', // Replace with your actual base URL
   getTopMovies: async (page = 1) => {
     return API.fetch(`/api/movies/top`);
   },
 
-  getRandomMovie: async () => {
+  getRandomMovies: async () => {
     return API.fetch(`/api/movies/random`);
   },
 
