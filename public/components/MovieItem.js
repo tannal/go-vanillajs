@@ -9,7 +9,7 @@ export class MovieItem extends HTMLElement {
   }
   connectedCallback() {
     this.innerHTML = `
-    <a class="navlink"  href="/movies/${this.movie.id}">
+    <a class="navlink" href="/movies/${this.movie.id}">
       <article>
         <img src="${this.movie.poster_url}" alt="">
         <p>${this.movie.title} ${this.movie.release_year}</p>

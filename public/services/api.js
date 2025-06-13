@@ -17,19 +17,66 @@ export const API = {
 
   searchMovies: async (query, order, genres) => {
     if (!query) throw new Error('Search query is required');
-    return API.fetch(`/api/movies/search`, {query, order, genres});
+    return API.fetch(`/api/movies/search`, { query, order, genres });
   },
 
-fetch: async (serviceName, args) => {
-    try {
+  getFavoriteMovies: () => {
+    return API.fetch(`/api/movies/favorites`);
+  },
+
+  login: async (username, password) => {
+    if (!username || !password) throw new Error('Username and password are required');
+    const response = await fetch(API.baseURL + "/api/account/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username, password })
+    });
+    if (!response.ok) {
+      throw new Error('Login failed');
+    }
+    return response.json();
+  },
+
+  register: async (data) => {
+    if (!data || !(data instanceof FormData)) throw new Error('Form data is required');
+    const response = await fetch(API.baseURL + "/api/account/register", {
+      method: "POST",
+      body: data
+    });
+    if (!response.ok) {
+      throw new Error('Registration failed');
+    }
+    return response.json();
+  },
+
+  send: async (serviceName, args) => {
+      try {
+        const response = await fetch(API.baseURL + serviceName, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(args)
+        });
+        const result = await response.json();
+        return result;
+      } catch (e) {
+        console.error(e);
+      }
+    },
+
+  fetch: async (serviceName, args) => {
+      try {
         const queryString = args ? new URLSearchParams(args).toString() : "";
         const response = await fetch(API.baseURL + serviceName + "?" + queryString);
         const result = await response.json();
         return result;
-    } catch (e) {
+      } catch (e) {
         console.error(e);
+      }
     }
-}
 }
 
 

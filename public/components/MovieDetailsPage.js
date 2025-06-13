@@ -11,32 +11,32 @@ export class MovieDetailsPage extends HTMLElement {
             alert("Movie doesn't exist"); // TODO replace alert
             return;
         }
-
+        
         const template = document.getElementById("template-movie-details");
         const content = template.content.cloneNode(true);
         this.appendChild(content)
-
+        
         this.querySelector("h2").textContent = this.movie.title;
         this.querySelector("h3").textContent = this.movie.tagline;
         this.querySelector("img").src = this.movie.poster_url;
         this.querySelector("#trailer").dataset.url = this.movie.trailer_url;
         this.querySelector("#overview").textContent = this.movie.overview;
         this.querySelector("#metadata").innerHTML = `
-      <dt>Release Year</dt>
-      <dd>${this.movie.release_year}</dd>
-      <dt>Score</dt>
-      <dd>${this.movie.score} / 10</dd>
-      <dt>Popularity</dt>
-      <dd>${this.movie.popularity}</dd>
-    `;
-    const ulGenres = this.querySelector("#genres");
+        <dt>Release Year</dt>
+        <dd>${this.movie.release_year}</dd>
+        <dt>Score</dt>
+        <dd>${this.movie.score} / 10</dd>
+        <dt>Popularity</dt>
+        <dd>${this.movie.popularity}</dd>
+        `;
+        const ulGenres = this.querySelector("#genres");
         ulGenres.innerHTML = "";
         this.movie.genres.forEach(genre => {
             const li = document.createElement("li");
             li.textContent = genre.name;
             ulGenres.appendChild(li);
         });
-
+        
         const ulCast = this.querySelector("#cast");
         ulCast.innerHTML = "";
         this.movie.casting.forEach(actor => {
@@ -49,8 +49,13 @@ export class MovieDetailsPage extends HTMLElement {
         });
     }
 
+    constructor() {
+        super();
+        this.id = window.location.pathname.split("/").pop(); // Extract the movie ID from the URL
+        // this.attachShadow({ mode: 'open' }); // Uncomment if you want to use shadow DOM
+    }
+    
     connectedCallback() {
-        this.id = 14; // TODO
         this.render().catch(error => {
             console.error("Error rendering movie details:", error);
             this.innerHTML = "<p>Error loading movie details.</p>"; // Fallback content

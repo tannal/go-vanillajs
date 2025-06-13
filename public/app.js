@@ -1,4 +1,4 @@
-import { API } from "./services/API.js";
+import { API } from "./services/api.js";
 import Router from "./services/Router.js";
 
 
@@ -30,6 +30,16 @@ window.app = {
         if (keywords.length>1) {
             app.Router.go(`/movies?q=${keywords}`)
         }
+    },
+    register : (event) => {
+        event.preventDefault();
+        const form = document.querySelector("form#register");
+        const data = new FormData(form);
+        API.register(data).then(() => {
+            app.Router.go("/account/favorites");
+        }).catch(error => {
+            app.showError(error.message);
+        });
     },
     api: API
 }

@@ -49,8 +49,15 @@ func main() {
 		logger.Error("Failed to create movie repository:", err)
 		return
 	}
+	accountRepository, err := data.NewAccountRepository(db, logger)
+
+	if err != nil {
+		logger.Error("Failed to create account repository:", err)
+		return
+	}
 
 	movieHandler := handlers.NewMovieHandler(movieRepository, *logger)
+	accountHandler := handlers.NewAccountHandler(accountRepository, logger)
 
 	http.HandleFunc("/", http.FileServer(http.Dir("./public")).ServeHTTP)
 	http.HandleFunc("/api/movies/random", movieHandler.GetRandomMovies)
@@ -58,14 +65,15 @@ func main() {
 	http.HandleFunc("/api/movies/search", movieHandler.SearchMovies)
 	http.HandleFunc("/api/movies/", movieHandler.GetMovie)
 	http.HandleFunc("/api/genres", movieHandler.GetGenres)
-	http.HandleFunc("/api/account/register", movieHandler.GetGenres)
-	http.HandleFunc("/api/account/authenticate", movieHandler.GetGenres)
+	http.HandleFunc("/api/account/register", accountHandler.Register)
+	http.HandleFunc("/api/account/authenticate", accountHandler.Authenticate)
 
 	catchAllHandler := func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "./public/index.html")
 	}
 	http.HandleFunc("/movies", catchAllHandler)
 	http.HandleFunc("/movies/", catchAllHandler)
+	http.HandleFunc("/account", catchAllHandler)
 	http.HandleFunc("/account/", catchAllHandler)
 
 	const addr = ":8080"
