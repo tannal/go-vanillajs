@@ -31,15 +31,55 @@ window.app = {
             app.Router.go(`/movies?q=${keywords}`)
         }
     },
-    register : (event) => {
-        event.preventDefault();
-        const form = document.querySelector("form#register");
-        const data = new FormData(form);
-        API.register(data).then(() => {
-            app.Router.go("/account/favorites");
-        }).catch(error => {
-            app.showError(error.message);
-        });
+    searchOrderChange: (order) => {
+        console.log("Order changed to:", order);
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q');
+        if (query) {
+            app.Router.go(`/movies?q=${query}&order=${order}`);
+        } else {
+            app.showError("No search query provided.");
+        }
     },
+    searchFilterChange: (genre) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q');
+        if (query) {
+            app.Router.go(`/movies?q=${query}&genre=${genre}`);
+        } else {
+            app.showError("No search query provided.");
+        }
+    },
+    register: async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event?.target || document.querySelector("#template-register form"));
+        console.log("Registering user with data:", formData.get("email"), formData.get("password"));
+        await API.send("/api/account/register", {email: formData.get("email"), password: formData.get("password"), name: formData.get("name")});
+        Router.go("/account/login");
+    },
+    authenticate: async (event) => {
+        event.preventDefault();
+        const formData = new FormData(event?.target || document.querySelector("#template-login form"));
+        await API.send("/api/account/authenticate", {email: formData.get("email"), password: formData.get("password")})
+
+        Router.go("/");
+    },   
+    send: async (service, args) => {
+        try {
+            const response = await fetch(API.baseURL + service, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(args)
+            });
+            const result = await response.json();
+            return result;
+        } catch (e) {
+            console.error(e);
+            app.showError();
+        }
+    },   
+
     api: API
 }

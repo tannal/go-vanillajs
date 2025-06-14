@@ -9,6 +9,7 @@ type User struct {
 	Favorites      []Movie `json:"favorites,omitempty"`
 	CreatedAt      string  `json:"created_at"`
 	UpdatedAt      string  `json:"updated_at"`
+	Password       string  `json:"-"`
 	PasswordHashed string  `json:"-"`
 	DeletedAt      *string `json:"deleted_at,omitempty"`
 }

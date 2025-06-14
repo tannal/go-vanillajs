@@ -98,13 +98,13 @@
             <h2>Register a New Account</h2>
             <form onsubmit="app.register(event)">
                 <label for="register-name">Name</label>
-                <input id="register-name" type="text" required autocomplete="name">
+                <input id="register-name" name="name" type="text"  required autocomplete="name">
 
                 <label for="register-email">E-mail</label>
-                <input id="register-email" required type="email" autocomplete="email">
+                <input id="register-email" name="email" required type="email" autocomplete="email">
 
-                <label for="register-password">Password</label>
-                <input id="register-password" type="password" required autocomplete="new-password">
+                <label for="register-password" name="password">Password</label>
+                <input id="register-password" name="password" type="password" required autocomplete="new-password">
 
                 <label for="register-password-confirmation">Repeat your Password</label>
                 <input id="register-password-confirmation" required type="password">
@@ -118,12 +118,12 @@
     <template id="template-login">
         <section>
             <h2>Login an Account</h2>
-            <form onsubmit="app.register(event)">
+            <form onsubmit="app.authenticate(event)">
                 <label for="register-email">E-mail</label>
-                <input id="register-email" required type="email" autocomplete="email">
+                <input id="register-email" name="email" required type="email" autocomplete="email">
 
                 <label for="register-password">Password</label>
-                <input id="register-password" type="password" required autocomplete="new-password">
+                <input id="register-password" name="password" type="password" required autocomplete="new-password">
                 <button type="submit">Login</button>
 
                 <p>If you don't have an account, please <a href="/account/register">register</a>. </p>

@@ -8,7 +8,7 @@ export class MoviesPage extends HTMLElement {
         const genre = urlParams.get("genre") ?? "";
 
         const movies = await API.searchMovies(query, order, genre);
-
+        // movies.sort((a, b) => b.popularity - a.popularity);
         const ulMovies = this.querySelector("ul");
         ulMovies.innerHTML = "";
         if (movies && movies.length > 0) {
@@ -42,6 +42,20 @@ export class MoviesPage extends HTMLElement {
         } else {
             app.showError();
         }
+    }
+
+    async loadGenres() {
+        const genres = await API.getGenres();
+        const select = this.querySelector("#filter");
+        select.innerHTML = `
+		<option value=''>Filter by Genre</option>
+	`;
+        genres.forEach(genre => {
+            var option = document.createElement("option");
+            option.value = genre.id;
+            option.textContent = genre.name;
+            select.appendChild(option);
+        })
     }
 }
 customElements.define("movies-page", MoviesPage);
