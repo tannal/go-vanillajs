@@ -11,11 +11,11 @@ export class MovieDetailsPage extends HTMLElement {
             alert("Movie doesn't exist"); // TODO replace alert
             return;
         }
-        
+
         const template = document.getElementById("template-movie-details");
         const content = template.content.cloneNode(true);
         this.appendChild(content)
-        
+
         this.querySelector("h2").textContent = this.movie.title;
         this.querySelector("h3").textContent = this.movie.tagline;
         this.querySelector("img").src = this.movie.poster_url;
@@ -36,7 +36,15 @@ export class MovieDetailsPage extends HTMLElement {
             li.textContent = genre.name;
             ulGenres.appendChild(li);
         });
-        
+
+        this.querySelector("#btnFavorites").addEventListener("click", async () => {
+            app.saveToCollection(this.movie.id, 'favorite')
+        })
+
+        this.querySelector("#btnWatchlist").addEventListener("click", async () => {
+            app.saveToCollection(this.movie.id, 'watchlist')
+        })
+
         const ulCast = this.querySelector("#cast");
         ulCast.innerHTML = "";
         this.movie.casting.forEach(actor => {
@@ -54,7 +62,7 @@ export class MovieDetailsPage extends HTMLElement {
         this.id = window.location.pathname.split("/").pop(); // Extract the movie ID from the URL
         // this.attachShadow({ mode: 'open' }); // Uncomment if you want to use shadow DOM
     }
-    
+
     connectedCallback() {
         this.render().catch(error => {
             console.error("Error rendering movie details:", error);

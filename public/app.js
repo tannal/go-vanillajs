@@ -1,6 +1,6 @@
 import { API } from "./services/api.js";
 import Router from "./services/Router.js";
-
+import Store from "./services/Store.js";
 
 window.addEventListener("DOMContentLoaded", event => {
     app.Router.init();
@@ -8,6 +8,7 @@ window.addEventListener("DOMContentLoaded", event => {
 
 window.app = {
     Router,
+    Store,
     showError: (message = "There was an error.", goToHome = true) => {
         document.getElementById("alert-modal").showModal();
         document.querySelector("#alert-modal p").textContent = message; // Added 'message' as the content based on context
@@ -27,7 +28,7 @@ window.app = {
     search: (event) => {
         event.preventDefault();
         const keywords = document.querySelector("input[type=search]").value;
-        if (keywords.length>1) {
+        if (keywords.length > 1) {
             app.Router.go(`/movies?q=${keywords}`)
         }
     },
@@ -50,20 +51,78 @@ window.app = {
             app.showError("No search query provided.");
         }
     },
+    getFavorites: async () => {
+        try {
+            return await API.fetch("/api/account/favorites");
+        } catch (e) {
+            app.Router.go("/account/")
+        }
+    },
+    getWatchlist: async () => {
+        try {
+            return await API.fetch("/api/account/watchlist");
+        } catch (e) {
+            app.Router.go("/account/")
+        }
+
+    },
+    saveToCollection: async (movie_id, collection) => {
+        return await API.send("/api/account/save-to-collection/", {
+            movie_id, collection
+        });
+    },
     register: async (event) => {
         event.preventDefault();
         const formData = new FormData(event?.target || document.querySelector("#template-register form"));
-        console.log("Registering user with data:", formData.get("email"), formData.get("password"));
-        await API.send("/api/account/register", {email: formData.get("email"), password: formData.get("password"), name: formData.get("name")});
-        Router.go("/account/login");
+        const name = formData.get("name") || "";
+        const email = formData.get("email") || "";
+        const password = formData.get("password") || "";
+        const passwordConfirmation = formData.get("password-confirmation") || "";
+
+        const errors = [];
+        if (name.length < 4) errors.push("Enter your complete name");
+        if (password.length < 7) errors.push("Enter a password with at least 7 characters");
+        if (email.length < 4) errors.push("Enter your complete email");
+        if (password != passwordConfirmation) errors.push("Passwords don't match");
+        formData.delete("password-confirmation");
+
+        if (errors.length == 0) {
+            const response = await API.register(formData);
+            if (response.success) {
+                app.Store
+                app.Router.go("/account/");
+            } else {
+                app.showError(response.message);
+            }
+        } else {
+            app.showError(errors.join(". "));
+        }
+
     },
-    authenticate: async (event) => {
+    login: async (event) => {
         event.preventDefault();
         const formData = new FormData(event?.target || document.querySelector("#template-login form"));
-        await API.send("/api/account/authenticate", {email: formData.get("email"), password: formData.get("password")})
+        const email = formData.get("email") || "";
+        const password = formData.get("password") || "";
 
-        Router.go("/");
-    },   
+        const errors = [];
+        if (password.length < 7) errors.push("Enter a password with at least 7 characters");
+        if (email.length < 4) errors.push("Enter your complete email");
+
+        if (errors.length == 0) {
+            const response = await API.login(email, password);
+            if (response.success) {
+                app.Store.jwt = response.jwt;
+                // app.Router.go("/account/");
+            } else {
+                app.showError(response.message);
+            }
+        } else {
+            app.showError(errors.join(". "));
+        }
+    },
+    logout: () => {
+    },
     send: async (service, args) => {
         try {
             const response = await fetch(API.baseURL + service, {
@@ -79,7 +138,8 @@ window.app = {
             console.error(e);
             app.showError();
         }
-    },   
+    },
+
 
     api: API
 }

@@ -1,10 +1,10 @@
 
 import { API } from "../services/api.js";
 
-export class AccountFavoritePage extends HTMLElement {
+export class AccountPage extends HTMLElement {
     constructor() {
         super();
-        this.template = document.getElementById('template-account-favorite');
+        this.template = document.getElementById('template-account');
     }
 
     async render() {
@@ -21,11 +21,11 @@ export class AccountFavoritePage extends HTMLElement {
     connectedCallback() {
         const content = this.template.content.cloneNode(true);
         this.appendChild(content);
-        
+
         this.render().catch(error => {
             console.error("Error rendering AccountFavoritePage:", error);
         });
     }
 }
 
-customElements.define("account-favorite-page", AccountFavoritePage);
+customElements.define("account-page", AccountPage);

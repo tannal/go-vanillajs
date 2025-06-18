@@ -24,6 +24,27 @@ export const API = {
     return API.fetch(`/api/movies/favorites`);
   },
 
+  getFavorites: async () => {
+    try {
+      return await API.fetch("/api/account/favorites");
+    } catch (e) {
+      app.Router.go("/account/")
+    }
+  },
+  getWatchlist: async () => {
+    try {
+      return await API.fetch("/api/account/watchlist");
+    } catch (e) {
+      app.Router.go("/account/")
+    }
+
+  },
+  saveToCollection: async (movie_id, collection) => {
+    return await API.send("/api/account/save-to-collection/", {
+      movie_id, collection
+    });
+  },
+
   login: async (email, password) => {
     if (!email || !password) throw new Error('Username and password are required');
     const response = await fetch(API.baseURL + "/api/account/authenticate", {
@@ -51,32 +72,29 @@ export const API = {
     return response.json();
   },
 
-  send: async (serviceName, args) => {
-    try {
-      const response = await fetch(API.baseURL + serviceName, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(args)
-      });
-      const result = await response.json();
-      return result;
-    } catch (e) {
-      console.error(e);
-    }
+  send: async (service, args) => {
+    const response = await fetch(API.baseURL + service, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": app.Store.jwt ? `Bearer ${app.Store.jwt}` : null
+      },
+      body: JSON.stringify(args)
+    });
+    const result = await response.json();
+    return result;
   },
+  fetch: async (service, args) => {
+    const queryString = args ? new URLSearchParams(args).toString() : "";
+    const response = await fetch(API.baseURL + service + '?' + queryString, {
+      headers: {
+        "Authorization": app.Store.jwt ? `Bearer ${app.Store.jwt}` : null
 
-  fetch: async (serviceName, args) => {
-    try {
-      const queryString = args ? new URLSearchParams(args).toString() : "";
-      const response = await fetch(API.baseURL + serviceName + "?" + queryString);
-      const result = await response.json();
-      return result;
-    } catch (e) {
-      console.error(e);
-    }
-  }
+      }
+    });
+    const result = await response.json();
+    return result;
+  },
 }
 
 
