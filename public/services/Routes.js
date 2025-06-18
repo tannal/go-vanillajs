@@ -31,7 +31,11 @@ export const routes = [
   {
     path: "/account",
     component: AccountPage,
-    loggedIn: true
+  },
+  {
+    path: "/account/profile",
+    component: AccountPage,
+    loggedIn: true,
   },
   {
     path: "/account/favorites",

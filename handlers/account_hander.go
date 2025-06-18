@@ -247,6 +247,27 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *AccountHandler) GetCurrentAccount(w http.ResponseWriter, r *http.Request) {
+	// Get the email from the context
+	email, ok := r.Context().Value("email").(string)
+	if !ok {
+		http.Error(w, "Unable to retrieve email", http.StatusInternalServerError)
+		return
+	}
+
+	// Retrieve account details
+	details, err := h.storage.GetAccountDetails(email)
+	if err != nil {
+		http.Error(w, "Unable to retrieve account details", http.StatusInternalServerError)
+		return
+	}
+
+	// Write the response
+	if err := h.writeJSONResponse(w, details); err == nil {
+		h.logger.Info("Successfully sent account details for email: " + email)
+	}
+}
+
 func NewAccountHandler(storage data.AccountStorage, log *logger.Logger) *AccountHandler {
 	return &AccountHandler{
 		storage: storage,

@@ -8,19 +8,20 @@ export class AccountPage extends HTMLElement {
     }
 
     async render() {
-        const favoriteMovies = await API.getFavoriteMovies();
-        const ul = this.querySelector("ul");
-        ul.innerHTML = "Account Favorite Movies:";
-        favoriteMovies.forEach(movie => {
-            const li = document.createElement("li");
-            li.appendChild(new MovieItem(movie));
-            ul.appendChild(li);
-        });
+        if (localStorage.getItem("jwt") === null) {
+            console.error("User is not logged in, redirecting to login page.");
+            app.Router.go("/account/login");
+            return;
+        } else {
+            const user = await API.getCurrentUser();
+            const content = this.template.content.cloneNode(true);
+            content.querySelector("#account-name").textContent = user.name;
+            this.appendChild(content);
+        }
+
     }
 
     connectedCallback() {
-        const content = this.template.content.cloneNode(true);
-        this.appendChild(content);
 
         this.render().catch(error => {
             console.error("Error rendering AccountFavoritePage:", error);

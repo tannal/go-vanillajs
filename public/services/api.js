@@ -24,6 +24,14 @@ export const API = {
     return API.fetch(`/api/movies/favorites`);
   },
 
+  getCurrentUser: async () => {
+    try {
+      return await API.fetch("/api/account/");
+    } catch (e) {
+      app.Router.go("/account/login")
+    }
+  },
+
   getFavorites: async () => {
     try {
       return await API.fetch("/api/account/favorites");

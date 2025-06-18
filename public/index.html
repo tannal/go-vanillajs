@@ -118,7 +118,7 @@
     <template id="template-login">
         <section>
             <h2>Login an Account</h2>
-            <form onsubmit="app.login(event)">
+            <form onsubmit="app.login(event);app.Router.go('/account');">
                 <label for="register-email">E-mail</label>
                 <input id="register-email" name="email" required type="email" autocomplete="email">
 
@@ -129,6 +129,16 @@
                 <p>If you don't have an account, please <a href="/account/register">register</a>. </p>
 
             </form>
+        </section>
+    </template>
+
+    <template id="template-account">
+        <section>
+            <h2>My Account</h2>
+            <p>Welcome, <span id="account-name"></span></p>
+            <p><a href="/account/favorites">My Favorites</a></p>
+            <p><a href="/account/watchlist">My Watchlist</a></p>
+            <button id="btnLogout" onclick="app.logout()">Logout</button>
         </section>
     </template>
 

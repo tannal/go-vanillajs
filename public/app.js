@@ -113,6 +113,7 @@ window.app = {
             const response = await API.login(email, password);
             if (response.success) {
                 app.Store.jwt = response.jwt;
+                // app.Store.user = response.user;
                 // app.Router.go("/account/");
             } else {
                 app.showError(response.message);
@@ -122,6 +123,9 @@ window.app = {
         }
     },
     logout: () => {
+        app.Store.jwt = null;
+        localStorage.removeItem("jwt");
+        app.Router.go("/");
     },
     send: async (service, args) => {
         try {
@@ -139,7 +143,5 @@ window.app = {
             app.showError();
         }
     },
-
-
     api: API
 }
