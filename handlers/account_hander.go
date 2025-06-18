@@ -6,6 +6,8 @@ import (
 
 	"tannal.org/reelingit/data"
 	"tannal.org/reelingit/logger"
+	"tannal.org/reelingit/models"
+	"tannal.org/reelingit/token"
 )
 
 // Define request structure
@@ -24,6 +26,7 @@ type AuthRequest struct {
 type AuthResponse struct {
 	Success bool   `json:"success"`
 	Message string `json:"message"`
+	JWT     string `json:"jwt"`
 }
 
 type AccountHandler struct {
@@ -72,14 +75,18 @@ func (h *AccountHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	// Parse request body
 	var req RegisterRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		h.logger.Error("Failed to decode registration request", err)
-		http.Error(w, "Invalid request body", http.StatusBadRequest)
+	err := r.ParseMultipartForm(32 << 20) // 32MB 最大内存
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
+	name := r.FormValue("name")
+	email := r.FormValue("email")
+	password := r.FormValue("password")
+
 	// Register the user
-	success, err := h.storage.Register(req.Name, req.Email, req.Password)
+	success, err := h.storage.Register(name, email, password)
 	if h.handleStorageError(w, err, "Failed to register user") {
 		return
 	}
@@ -88,6 +95,7 @@ func (h *AccountHandler) Register(w http.ResponseWriter, r *http.Request) {
 	response := AuthResponse{
 		Success: success,
 		Message: "User registered successfully",
+		JWT:     token.CreateJWT(models.User{Email: req.Email, Name: req.Name}, *h.logger),
 	}
 
 	if err := h.writeJSONResponse(w, response); err == nil {
@@ -114,6 +122,7 @@ func (h *AccountHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	response := AuthResponse{
 		Success: success,
 		Message: "User registered successfully",
+		JWT:     token.CreateJWT(models.User{Email: req.Email}, *h.logger),
 	}
 
 	if err := h.writeJSONResponse(w, response); err == nil {

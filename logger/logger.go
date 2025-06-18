@@ -25,6 +25,12 @@ func NewLogger(logFilePath string) (*Logger, error) {
 	}, nil
 }
 
+func (l *Logger) GetConfigValue(key string) string {
+	// This function is a placeholder for retrieving configuration values.
+	// In a real application, you might read from a config file or environment variables.
+	return os.Getenv(key)
+}
+
 // Info logs informational messages to stdout
 func (l *Logger) Info(msg string) {
 	l.infoLogger.Printf("%s", msg)
